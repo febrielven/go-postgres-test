@@ -1,0 +1,24 @@
+dist: trusty
+# addons:
+#   postgresql: "10"
+#   apt:
+#     packages:
+#     - postgresql-10
+# env:
+#   global:
+#   - PGPORT=5433
+language: go
+go:
+- "1.10"
+before_install:
+  - go get github.com/golangci/golangci-lint
+  - go get github.com/gorilla/mux
+  - go get github.com/joho/godotenv
+  - go get github.com/lib/pq
+  - go get golang.org/x/sys
+
+script:
+  - go test -v ./...
+
+
+
