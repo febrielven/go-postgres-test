@@ -2,17 +2,16 @@ package main
 
 import (
 	"fmt"
+	"go-postgres-test/api/routes"
 	"log"
 	"net/http"
-
-	"github.com/febrielven/go-postgres-test/api/middleware"
 )
 
 func main() {
-	db := middleware.CreateConnection()
+	// db := middleware.CreateConnection()
+	// defer db.Close()
+	r := routes.Router()
 
-	defer db.Close()
-
-	fmt.Println("Starting server on the port 3999...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Println("Starting server on the port 8082...")
+	log.Fatal(http.ListenAndServe(":8082", r))
 }
