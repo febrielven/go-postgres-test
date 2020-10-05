@@ -1,0 +1,72 @@
+package rides
+
+import (
+	"context"
+	"database/sql"
+	models "go-postgres-test/apiV2/models"
+	repo "go-postgres-test/apiV2/repository"
+)
+
+// RideRepo ...
+type RideRepo struct {
+	Conn *sql.DB
+}
+
+// NewSQLRideRepo return implement of ride repository  interface
+func NewSQLRideRepo(Conn *sql.DB) repo.RideRepository {
+	return &RideRepo{
+		Conn: Conn,
+	}
+
+}
+
+// Fetch ...
+func (p *RideRepo) Fetch(ctx context.Context) ([]*models.Rides, error) {
+	// create the sql statement
+	sqlStatement := "SELECT * FROM rides"
+	return p.fetch(ctx, sqlStatement)
+}
+
+// get from the DB
+func (p *RideRepo) fetch(ctx context.Context, sqlStatement string) ([]*models.Rides, error) {
+
+	// execute query statement
+	rows, err := p.Conn.QueryContext(ctx, sqlStatement)
+
+	if err != nil {
+		// log.Fatalf("Unable to execute the query. %v", err)
+		return nil, err
+	}
+	// close the statement
+	defer rows.Close()
+
+	// create payload of models.Rides
+	payload := make([]*models.Rides, 0)
+
+	// iterate  over the rows
+	for rows.Next() {
+		data := new(models.Rides)
+
+		// unmarshal the row object to ride
+		err := rows.Scan(
+			&data.ID,
+			&data.StartLat,
+			&data.StartLong,
+			&data.EndLat,
+			&data.EndLong,
+			&data.RiderName,
+			&data.DriverName,
+			&data.DriverVehicle,
+			&data.Created)
+
+		if err != nil {
+			// log.Fatalf("Unable to scan the row. %v", err)
+			return nil, err
+		}
+		// append the data in the rides slice
+		payload = append(payload, data)
+	}
+
+	return payload, nil
+
+}
