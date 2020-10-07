@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strconv" // package used to convert string to int type
 
-	"go-postgres-test/apiV2/models" // models package where ride schema is defined
+	"github.com/febrielven/go-postgres-test/apiV2/models" // models package where ride schema is defined
 
 	"github.com/gorilla/mux" // used to get params form routes
 	_ "github.com/lib/pq"    // postgres golang driver

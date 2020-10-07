@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"go-postgres-test/apiV2/models"
-	repository "go-postgres-test/apiV2/repository"
-	rides "go-postgres-test/apiV2/repository/rides"
 	"net/http"
 	"strconv" // package used to convert string to int type
+
+	"github.com/febrielven/go-postgres-test/apiV2/models"
+	repository "github.com/febrielven/go-postgres-test/apiV2/repository"
+	rides "github.com/febrielven/go-postgres-test/apiV2/repository/rides"
 
 	"github.com/go-chi/chi" // used to get params form routes
 )

@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	models "go-postgres-test/apiV2/models"
-	repository "go-postgres-test/apiV2/repository"
+	models "github.com/febrielven/go-postgres-test/apiV2/models"
+	repository "github.com/febrielven/go-postgres-test/apiV2/repository"
 	"log"
 )
 

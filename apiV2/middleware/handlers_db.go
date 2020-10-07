@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"go-postgres-test/apiV2/models"
+	"github.com/febrielven/go-postgres-test/apiV2/models"
 
 	"github.com/joho/godotenv"
 )

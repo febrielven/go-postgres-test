@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	hd "go-postgres-test/apiV2/handlers"
-	"go-postgres-test/config"
 	"log"
 	"net/http"
+
+	hd "github.com/febrielven/go-postgres-test/apiV2/handlers"
+	"github.com/febrielven/go-postgres-test/config"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"

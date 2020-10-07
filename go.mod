@@ -1,10 +1,10 @@
-module go-postgres-test
+module github.com/febrielven/go-postgres-test
 
 go 1.14
 
 require (
-	github.com/febrielven/go-postgres-test v0.0.0-20200912015947-a9358feef7be
 	github.com/go-chi/chi v4.1.2+incompatible
+	github.com/golangci/golangci-lint v1.31.0 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0

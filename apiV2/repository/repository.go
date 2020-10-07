@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	models "go-postgres-test/apiV2/models"
+	models "github.com/febrielven/go-postgres-test/apiV2/models"
 )
 
 // RideRepository ...

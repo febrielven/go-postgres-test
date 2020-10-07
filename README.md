@@ -1,1 +1,1 @@
-# go-postgres-test
+# github.com/febrielven/go-postgres-test/

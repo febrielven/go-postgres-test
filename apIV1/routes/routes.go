@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"go-postgres-test/api/middleware"
+	"github.com/febrielven/go-postgres-test/apiV1/middleware"
 
 	"github.com/gorilla/mux"
 )
