@@ -1,9 +1,16 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
+	"go-postgres-test/apiV2/models"
 	repository "go-postgres-test/apiV2/repository"
+	rides "go-postgres-test/apiV2/repository/rides"
 	"net/http"
+	"strconv" // package used to convert string to int type
+
+	"github.com/go-chi/chi" // used to get params form routes
 )
 
 // RideHandler will hold everything that controller needs
@@ -12,22 +19,92 @@ type RideHandler struct {
 }
 
 // NewRideHandler returns a new RideHandler
-func NewRideHandler(rideRepo repository.RideRepository) *RideHandler {
+func NewRideHandler(db *sql.DB) *RideHandler {
 	return &RideHandler{
-		rideRepo: rideRepo,
+		rideRepo: rides.NewRideRepo(db),
 	}
 }
 
 // Fetch ...
 func (ride *RideHandler) Fetch(w http.ResponseWriter, r *http.Request) {
+	//
+	payload, err := ride.rideRepo.Fetch(r.Context())
 
-	payload, _ := ride.rideRepo.Fetch(r.Context())
-
-	respondwithJSON(w, http.StatusOK, payload)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unknown error")
+		return
+	}
+	respondWithJSON(w, http.StatusOK, payload)
 }
 
-// respondwithJSON write json response format
-func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
+// GetByID ...
+func (ride *RideHandler) GetByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// get rideid from request params, key is "id"
+	params := chi.URLParam(r, "id")
+
+	// convert string to int
+	id, err := strconv.Atoi(params)
+	if err != nil {
+		fmt.Printf("unable to convert string to int %v", err)
+		respondWithError(w, http.StatusUnprocessableEntity, "unable to convert string to int")
+		return
+	}
+	payload, err := ride.rideRepo.GetByID(r.Context(), int64(id))
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unknow error")
+		return
+
+	}
+	if payload == nil && err == nil {
+		respondWithError(w, http.StatusUnprocessableEntity, "Could not find any rides")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, payload)
+
+}
+
+// Save ...
+func (ride *RideHandler) Save(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	// create empty ride of models.Rides
+	var mride models.Rides
+
+	err := json.NewDecoder(r.Body).Decode(&mride)
+
+	if err != nil {
+		fmt.Printf("unable to decoder the request body, %v", err)
+		respondWithError(w, http.StatusUnprocessableEntity, "unable to decoder the request body")
+		return
+	}
+
+	// call save ride repository and pass the ride
+	insertedID, err := ride.rideRepo.Save(r.Context(), mride)
+
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Unknow error")
+		return
+	}
+
+	res := response{
+		ID:      insertedID,
+		Message: "Ride created successfully",
+	}
+
+	respondWithJSON(w, http.StatusCreated, res)
+}
+
+type response struct {
+	ID      int64  `json:"id,omitempty"`
+	Message string `json:"message,omitempty"`
+}
+
+// respondWithJSON write json response format
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 
 	w.Header().Set("Content-Type", "application/json")
@@ -37,5 +114,5 @@ func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
 
 // respondwithError return error message
 func respondWithError(w http.ResponseWriter, code int, msg string) {
-	respondwithJSON(w, code, map[string]string{"message": msg})
+	respondWithJSON(w, code, map[string]string{"message": msg})
 }

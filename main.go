@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	hd "go-postgres-test/apiV2/handlers"
-	repo "go-postgres-test/apiV2/repository"
 	"go-postgres-test/config"
 	"log"
 	"net/http"
@@ -16,14 +15,13 @@ func main() {
 
 	// call connection db
 	db := config.CreateConnection()
-	// defer db.Close()
+	defer db.Close()
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Logger)
 
 	// Create repos
-	userRepo := repo.NewRideRepo(db)
-	rHandler := hd.NewBaseHandler(userRepo)
+	rHandler := hd.NewRideHandler(db)
 	r.Route("/api/", func(rt chi.Router) {
 		rt.Mount("/rides", rideRouter(rHandler))
 	})
@@ -36,5 +34,7 @@ func main() {
 func rideRouter(rHandler *hd.RideHandler) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", rHandler.Fetch)
+	r.Get("/{id}", rHandler.GetByID)
+	r.Post("/", rHandler.Save)
 	return r
 }
