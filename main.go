@@ -37,5 +37,6 @@ func rideRouter(rHandler *hd.RideHandler) http.Handler {
 	r.Get("/", rHandler.Fetch)
 	r.Get("/{id}", rHandler.GetByID)
 	r.Post("/", rHandler.Save)
+	r.Put("/{id}", rHandler.Update)
 	return r
 }

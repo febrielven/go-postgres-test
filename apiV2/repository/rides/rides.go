@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
+
 	models "github.com/febrielven/go-postgres-test/apiV2/models"
 	repository "github.com/febrielven/go-postgres-test/apiV2/repository"
-	"log"
 )
 
 // RideRepo ...
@@ -106,12 +107,56 @@ func (pg *RideRepo) Save(ctx context.Context, ride models.Rides) (int64, error) 
 		fmt.Printf("unable to execute the query %v", err)
 		return rideid, err
 	}
-	fmt.Printf("Inserted a one record %d\n", rideid)
 
-	return rideid, err
+	return rideid, nil
 }
 
-// func (pg *RideRepo) Update(ctx context.Context, ride)
+// Update ..
+func (pg *RideRepo) Update(ctx context.Context, ride models.Rides) (int64, error) {
+
+	// create statement query
+	sqlStatement := `UPDATE
+				rides
+			SET
+				startlat=$2,
+				startlong=$3,
+				endlat= $4,
+				endlong= $5,
+				ridername=$6,
+				drivername=$7,
+				drivervehicle=$8
+			WHERE
+				rideid = $1`
+
+	// the inserted id will store this rideid
+	var rideid int64
+
+	// execute query sqlStatement
+	// scan function will updated the insert ride in then rideid
+	res, err := pg.db.Exec(
+		sqlStatement,
+		ride.ID,
+		ride.StartLat,
+		ride.StartLong,
+		ride.EndLat,
+		ride.EndLong,
+		ride.RiderName,
+		ride.DriverName,
+		ride.DriverVehicle)
+
+	if err != nil {
+		fmt.Printf("unable to execute the query %v", err)
+		return rideid, err
+	}
+	rowAffected, err := res.RowsAffected()
+	if err != nil {
+		log.Fatalf("Error while checking the affected rows. %v", err)
+	}
+
+	fmt.Printf("Total rows/recourd affected %v", rowAffected)
+	return rowAffected, nil
+
+}
 
 // get from the DB
 func (pg *RideRepo) fetch(ctx context.Context, sqlStatement string) ([]*models.Rides, error) {

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	models "github.com/febrielven/go-postgres-test/apiV2/models"
 )
 
@@ -13,8 +14,8 @@ type RideRepository interface {
 	GetByID(ctx context.Context, id int64) (*models.Rides, error)
 	// Save return id, message and error
 	Save(ctx context.Context, ride models.Rides) (int64, error)
-	// // Update return id, message and error
-	// Update(ctx context.Context, ride *models.Rides) (int64, error)
+	// Update return id, message and error
+	Update(ctx context.Context, ride models.Rides) (int64, error)
 	// // Delete return id, message and error
 	// Delete(ctx context.Context, id int64) (bool, error)
 }
